@@ -1,0 +1,29 @@
+.rating-box {
+  position: relative;
+  vertical-align: middle;
+  font-size: 1em;
+  font-family: "Font Awesome 5 Free";
+  display: inline-block;
+  color: #F68127;
+}
+
+.rating-box:before {
+  font-family: "Font Awesome 5 Free";
+  font-weight: 400;
+  content: "\f005 \f005 \f005 \f005 \f005";
+}
+
+.rating-box .rating {
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  color: #F68127;
+}
+
+.rating-box .rating::before {
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  content: "\f005 \f005 \f005 \f005 \f005";
+}
