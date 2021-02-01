@@ -1,5 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
+import Average from '../Utils/Utils';
+import Rating from '../Rating/Rating';
 
 const Wrapper = styled.div`
     padding: 50px 100px 50px 0;
@@ -26,15 +28,16 @@ const TotalOutOf = styled.div`
 `
 
 const Header = (props) => {
-    const { name, image_url, average_score } = props.attributes;
+    console.log(props);
+    const { name, image_url, average_score} = props.attributes;
     const total = props.reviews.length;
     return (
         <Wrapper>
             <h1><img src={image_url} alt={name} />{name}</h1>
             <div>
                 <TotalReviews>{total} User Reviews</TotalReviews>
-                <div className="starRating"></div>
-                <TotalOutOf>{average_score} out of 5</TotalOutOf>
+                <Rating score={average_score} />
+                <TotalOutOf>{Average(average_score/20.0)} out of 5</TotalOutOf>
             </div>
         </Wrapper>
     )

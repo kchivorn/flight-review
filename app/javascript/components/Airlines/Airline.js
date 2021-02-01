@@ -38,6 +38,7 @@ const LinkWrapper = styled.div`
 `
 
 const Airline = (props) => {
+    console.log(props.attributes.average_score);
     return (
         <Card>
             <AirlineLogo>

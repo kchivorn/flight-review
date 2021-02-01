@@ -31,7 +31,7 @@ const Review = (props) => {
         <Card>
             <RatingContainer>
                 <Rating 
-                    score={score}
+                    score={score * 20}
                 />
             </RatingContainer>
             <Title>{title}</Title>

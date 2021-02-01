@@ -3,7 +3,7 @@ import React, {useState, useEffect, Fragment} from 'react';
 import Header from './Header';
 import ReviewForm from './ReviewForm';
 import styled from 'styled-components';
-import Review from './Review';
+import Reviews from './Reviews';
 
 const Wrapper = styled.div`
     margin: 0 auto;
@@ -27,6 +27,8 @@ const Airline = (props) => {
     const [airline, setAirline] = useState({});
     const [review, setReview] = useState({title: '', description: '', score: 0});
     const [loaded, setLoaded] = useState(false);
+    const [reviews, setReviews] = useState([]);
+    const [firstLoaded, setFirstLoaded] = useState(true);
 
     useEffect(() => {
         const slug = props.match.params.slug;
@@ -34,12 +36,14 @@ const Airline = (props) => {
         axios.get(url)
         .then(resp => {
             setAirline(resp.data);
+            setReviews(resp.data.included);
             setLoaded(true);
         })
         .catch(error => console.log(error));
     }, []);
 
     const handleChange = (e) => {
+        setFirstLoaded(false);
         e.preventDefault();
         setReview(Object.assign({}, review, {[e.target.name]: e.target.value}));
     }
@@ -50,12 +54,16 @@ const Airline = (props) => {
         axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken;
 
         const airline_id = airline.data.id;
-        axios.post('/api/v1/reviews', {review, airline_id})
+        axios.post('/api/v1/reviews', {...review, airline_id})
         .then(resp => {
-            const included = [...airline.included, resp.data.data];
-            console.log(included);
+            setReviews([...reviews, resp.data.data]);
+            const included = reviews;
+            console.log(airline);
+            console.log(reviews);
+            airline.data.attributes.average_score = (airline.data.attributes.average_score * (reviews.length) + review.score * 20) / (reviews.length+1);
             setAirline({...airline, included});
             setReview({title: '', description: '', score: 0});
+            setFirstLoaded(true);
         }).catch(error => {
             console.log(error);
         });
@@ -64,19 +72,6 @@ const Airline = (props) => {
     const setRating =  (score, e) => {
         e.preventDefault();
         setReview({...review, score});
-    }
-
-    let reviews;
-    if (loaded && airline.included) {
-        reviews =  airline.included.map((item, index) => {
-            console.log(item);
-            return (
-                <Review
-                    key={index}
-                    attributes={item.attributes}
-                />
-            )
-        });
     }
 
     return (
@@ -89,10 +84,11 @@ const Airline = (props) => {
                             {
                                 <Header 
                                     attributes = {airline.data.attributes}
-                                    reviews = {airline.included}
+                                    reviews = {reviews}
+                                    average = {airline.data.attributes.average_score}
                                 />
                             }
-                            {reviews}
+                            <Reviews reviews={reviews} />
                         </Main>
                     </Column>
 
